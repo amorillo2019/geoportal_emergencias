@@ -100,7 +100,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "usuarios.User"
 LOGIN_URL = "usuarios:login"
-LOGIN_REDIRECT_URL = "usuarios:perfil"
+LOGIN_REDIRECT_URL = "mapas:operations_map"
 LOGOUT_REDIRECT_URL = "usuarios:login"
 
 REST_FRAMEWORK = {
