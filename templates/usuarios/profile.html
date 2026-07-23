@@ -1,0 +1,18 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Perfil | Geoportal</title><link href="{% static 'css/geoportal.css' %}" rel="stylesheet"></head>
+<body class="geoportal-body">
+  <main>
+    <h1>Mi perfil</h1>
+    {% if messages %}{% for message in messages %}<p>{{ message }}</p>{% endfor %}{% endif %}
+    <p>Rol: {{ request.user.get_role_display }}</p>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Guardar cambios</button>
+    </form>
+    <form method="post" action="{% url 'usuarios:logout' %}">{% csrf_token %}<button type="submit">Cerrar sesion</button></form>
+  </main>
+</body>
+</html>

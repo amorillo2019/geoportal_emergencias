@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Registrar víctima | Geoportal</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><link href="{% static 'css/geoportal.css' %}" rel="stylesheet"></head>
+<body class="geoportal-body"><main class="container py-4"><div class="public-alert-card surface-card p-3 p-md-4"><div class="d-flex justify-content-between align-items-start gap-3 mb-3"><div><div class="filter-title">Registro operativo</div><h1 class="h4 mb-1">Registrar víctima</h1><p class="text-secondary mb-0">Alerta: <strong>{{ alert.public_tracking_code|default:"Registro general" }}</strong>. Esta información es sensible.</p></div><i class="bi bi-person-vcard fs-2 text-primary"></i></div>{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}<form method="post" id="victim-form" novalidate>{% csrf_token %}<div class="row g-3">{% for field in form %}{% if field.name != 'latitude' and field.name != 'longitude' %}<div class="col-12 {% if field.name in 'first_names last_names identification_number phone sex health_status transfer_location safe_place' %}col-md-6{% endif %}"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}{% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}</div>{% endif %}{% endfor %}</div><div class="location-panel mt-4"><div class="d-flex flex-wrap align-items-center justify-content-between gap-2"><div><strong><i class="bi bi-geo-alt-fill me-1"></i>Ubicación de la víctima</strong><div id="location-status" class="location-status mt-1">Pulsa el botón para guardar las coordenadas en la capa de víctimas.</div></div><button type="button" id="use-location" class="btn btn-outline-primary"><i class="bi bi-crosshair me-1"></i>Usar mi ubicación</button></div>{{ form.latitude }}{{ form.longitude }}</div><div class="d-flex flex-wrap justify-content-end gap-2 mt-4"><a class="btn btn-light" href="javascript:history.back()">Cancelar</a><button class="btn btn-primary" type="submit"><i class="bi bi-save me-1"></i>Guardar víctima</button></div></form></div></main><script>
+const locationButton = document.getElementById("use-location");
+const locationStatus = document.getElementById("location-status");
+const latitude = document.getElementById("id_latitude");
+const longitude = document.getElementById("id_longitude");
+locationButton.addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    locationStatus.textContent = "Este navegador no permite obtener la ubicación.";
+    return;
+  }
+  locationButton.disabled = true;
+  locationStatus.textContent = "Obteniendo ubicación...";
+  navigator.geolocation.getCurrentPosition((position) => {
+    latitude.value = position.coords.latitude.toFixed(6);
+    longitude.value = position.coords.longitude.toFixed(6);
+    locationStatus.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i>Ubicación lista para guardarse en la capa.';
+    locationButton.disabled = false;
+  }, () => {
+    locationStatus.textContent = "No se pudo obtener la ubicación. Revisa los permisos del navegador.";
+    locationButton.disabled = false;
+  }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
+});
+</script></body></html>
